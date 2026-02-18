@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender Jawa & Hari Besar 2026</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#78350f">
+<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3652/3652191.png">
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .animate-zoom { animation: zoom 0.5s ease-out; }
+        @keyframes zoom {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .hide { display: none; }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800 p-2 md:p-8">
+
+<div id="app" class="max-w-6xl mx-auto space-y-6">
+    <!-- Panel Detail Hari -->
+    <div id="detail-hari" class="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-amber-600 text-center animate-zoom">
+        <p id="label-hari" class="text-amber-600 text-xs font-black uppercase tracking-[0.4em] mb-4">Hari Ini</p>
+        <div class="flex flex-col items-center">
+            <h2 id="sel-date" class="text-8xl md:text-9xl font-black text-stone-900 tracking-tighter leading-none mb-2"></h2>
+            <div class="space-y-1">
+                <p id="sel-month-year" class="text-xl md:text-2xl text-stone-500 font-bold uppercase tracking-widest"></p>
+                <div class="flex items-center justify-center gap-2 mt-2">
+                    <span class="h-px w-8 bg-amber-200"></span>
+                    <p id="sel-jawa" class="text-sm md:text-base text-amber-700 font-black italic"></p>
+                    <span class="h-px w-8 bg-amber-200"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Keterangan Hari Besar -->
+        <div id="holiday-info" class="mt-4 min-h-[1.5rem]">
+            <p id="sel-holiday" class="text-red-600 font-bold text-sm uppercase tracking-wide"></p>
+        </div>
+
+        <div class="mt-6 flex flex-col items-center justify-center">
+            <div class="bg-stone-900 text-white px-10 py-4 rounded-2xl shadow-2xl transform -rotate-1">
+                <p id="sel-full-hari" class="text-3xl md:text-4xl font-black tracking-tight"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigasi -->
+    <div class="flex flex-col md:flex-row justify-between items-center bg-white/50 p-4 rounded-2xl border border-white/20 backdrop-blur-sm gap-4">
+        <div class="flex items-center gap-4">
+            <div class="flex bg-white rounded-xl p-1 shadow-sm border border-stone-200 text-xs font-bold">
+                <button onclick="changeView('monthly')" id="btn-monthly" class="px-4 py-2 rounded-lg bg-stone-900 text-white shadow-lg transition-all">Bulanan</button>
+                <button onclick="changeView('yearly')" id="btn-yearly" class="px-4 py-2 rounded-lg text-stone-500 hover:bg-stone-50 transition-all">Tahunan</button>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="prevYear()" class="p-2.5 bg-white hover:bg-stone-50 rounded-xl border border-stone-200 shadow-sm transition">Prev Year</button>
+            <button onclick="goToday()" class="px-6 py-2.5 bg-stone-900 text-white rounded-xl text-xs font-bold shadow-lg">Hari Ini</button>
+            <button onclick="nextYear()" class="p-2.5 bg-white hover:bg-stone-50 rounded-xl border border-stone-200 shadow-sm transition">Next Year</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Tampilan Bulanan -->
+            <div id="monthly-view" class="bg-white rounded-3xl shadow-xl overflow-hidden border border-stone-200">
+                <div class="bg-stone-900 text-white p-8 flex justify-between items-center">
+                    <div>
+                        <h2 id="month-title" class="text-3xl font-black tracking-tight"></h2>
+                        <p id="jawa-title" class="text-amber-400 text-xs font-bold uppercase tracking-widest mt-1"></p>
+                    </div>
+                    <div class="flex gap-2 text-white">
+                        <button onclick="prevMonth()" class="p-3 hover:bg-stone-700 rounded-xl bg-stone-800"> < </button>
+                        <button onclick="nextMonth()" class="p-3 hover:bg-stone-700 rounded-xl bg-stone-800"> > </button>
+                    </div>
+                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 bg-stone-100 gap-px p-px">
+                    <!-- Tanggal diisi via JS -->
+                </div>
+                <!-- Keterangan Hari Peringatan Bulanan -->
+                <div id="monthly-holiday-footer" class="p-6 bg-stone-50 border-t border-stone-100">
+                    <h4 class="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-3">Hari Peringatan Bulan Ini</h4>
+                    <div id="holiday-list" class="space-y-2">
+                        <!-- List hari libur diisi via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tampilan Tahunan -->
+            <div id="yearly-view" class="hide grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Mini kalender diisi via JS -->
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-8">
+            <!-- Agenda -->
+            <div class="bg-white rounded-3xl shadow-xl border border-stone-200 p-8">
+                <h3 class="font-black uppercase tracking-widest text-sm text-stone-800 mb-6 flex items-center gap-2">Catatan Agenda</h3>
+                <p id="agenda-date-label" class="text-[10px] text-amber-600 font-bold mb-2 uppercase tracking-tighter"></p>
+                <textarea id="agenda-input" placeholder="Tulis rencana kegiatan Anda (Misal: Jadwal Vaksin Ayam)..." class="w-full h-40 p-5 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-4 focus:ring-amber-500/20 outline-none text-sm resize-none mb-6 transition-all"></textarea>
+                <div class="flex gap-3">
+                    <button onclick="saveAgenda()" class="flex-1 bg-stone-900 text-white font-black py-4 rounded-2xl text-xs shadow-xl active:scale-95 transition-transform">Simpan Agenda</button>
+                    <button onclick="deleteAgenda()" class="px-5 bg-red-50 text-red-600 rounded-2xl border border-red-100 active:scale-95 transition-transform">Hapus</button>
+                </div>
+            </div>
+
+            <!-- Weton -->
+            <div class="bg-stone-900 rounded-3xl shadow-xl p-8 text-white border-b-8 border-amber-600">
+                <h2 class="text-amber-500 text-[10px] font-black uppercase tracking-[0.3em] mb-6 text-center">Kalkulator Weton Lahir</h2>
+                <div class="space-y-4">
+                    <input type="date" id="check-date" class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-sm text-white outline-none">
+                    <button onclick="checkWeton()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-black py-3.5 rounded-xl text-xs transition shadow-lg">Hitung Weton</button>
+                </div>
+                <div id="weton-result" class="hidden mt-6 p-5 bg-white/5 rounded-2xl border border-white/10 text-center"></div>
+            </div>
+
+            <!-- Quote -->
+            <div class="bg-stone-800 rounded-3xl p-10 text-white text-center relative overflow-hidden">
+                <div class="relative z-10">
+                    <p class="text-[10px] text-amber-500 font-black uppercase mb-6 tracking-widest">Pitutur Luhur</p>
+                    <p class="text-2xl font-serif italic mb-4">"Sapa temen, bakal tinemu."</p>
+                    <p class="text-xs text-stone-400">Barangsiapa bersungguh-sungguh, maka ia akan menemukan cita-citanya.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const PASARAN = ['Legi', 'Pahing', 'Pon', 'Wage', 'Kliwon'];
+    const HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const BULAN_JAWA = ['Suro', 'Sapar', 'Mulud', 'Bakda Mulud', 'Jumadil Awal', 'Jumadil Akhir', 'Rajab', 'Ruwah', 'Pasa', 'Sawal', 'Sela', 'Besar'];
+    
+    // Data Hari Libur Nasional Indonesia 2026 (Estimasi)
+    const HARI_LIBUR_2026 = {
+        "2026-01-01": "Tahun Baru 2026 Masehi",
+        "2026-02-15": "Isra Mi'raj Nabi Muhammad SAW",
+        "2026-02-17": "Tahun Baru Imlek 2577 Kongzili",
+        "2026-03-20": "Hari Suci Nyepi (Tahun Baru Saka 1948)",
+        "2026-03-20": "Idul Fitri 1447 Hijriah",
+        "2026-03-21": "Idul Fitri 1447 Hijriah",
+        "2026-04-03": "Wafat Yesus Kristus",
+        "2026-04-05": "Hari Paskah",
+        "2026-05-01": "Hari Buruh Internasional",
+        "2026-05-14": "Kenaikan Yesus Kristus",
+        "2026-05-27": "Hari Raya Waisak 2570 BE",
+        "2026-05-27": "Idul Adha 1447 Hijriah",
+        "2026-06-01": "Hari Lahir Pancasila",
+        "2026-06-16": "Tahun Baru Islam 1448 Hijriah",
+        "2026-08-17": "Hari Kemerdekaan RI Ke-81",
+        "2026-08-25": "Maulid Nabi Muhammad SAW",
+        "2026-12-25": "Hari Raya Natal"
+    };
+
+    const REF_DATE = new Date(2023, 0, 1); 
+    const REF_PASARAN_INDEX = 1;
+
+    let viewMode = 'monthly';
+    let currentDate = new Date();
+    let selectedDate = new Date();
+    let agendas = JSON.parse(localStorage.getItem('kal_agendas') || '{}');
+
+    function formatDateKey(date) {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function getPasaran(date) {
+        const d = new Date(date); d.setHours(0,0,0,0);
+        const r = new Date(REF_DATE); r.setHours(0,0,0,0);
+        const diffDays = Math.round((d - r) / (1000 * 60 * 60 * 24));
+        let index = (REF_PASARAN_INDEX + diffDays) % 5;
+        if (index < 0) index += 5;
+        return PASARAN[index];
+    }
+
+    function renderDetail() {
+        const day = selectedDate.getDate();
+        const monthName = BULAN[selectedDate.getMonth()];
+        const year = selectedDate.getFullYear();
+        const dateKey = formatDateKey(selectedDate);
+        const holiday = HARI_LIBUR_2026[dateKey];
+        
+        document.getElementById('sel-date').innerText = day;
+        document.getElementById('sel-month-year').innerText = `${monthName} ${year}`;
+        document.getElementById('sel-jawa').innerText = `${BULAN_JAWA[selectedDate.getMonth()]} ${year - 67} AJ`;
+        document.getElementById('sel-full-hari').innerHTML = `${HARI[selectedDate.getDay()]} <span class="text-amber-400">${getPasaran(selectedDate)}</span>`;
+        
+        // Update label (Hari Ini vs Hari Terpilih)
+        const isToday = selectedDate.toDateString() === new Date().toDateString();
+        document.getElementById('label-hari').innerText = isToday ? "Hari Ini" : "Hari Terpilih";
+        
+        // Update Keterangan Hari Besar
+        const holidayEl = document.getElementById('sel-holiday');
+        if (holiday) {
+            holidayEl.innerText = holiday;
+        } else {
+            holidayEl.innerText = "";
+        }
+        
+        document.getElementById('agenda-date-label').innerText = `Catatan untuk: ${day} ${monthName} ${year}`;
+        document.getElementById('agenda-input').value = agendas[selectedDate.toDateString()] || '';
+    }
+
+    function changeView(mode) {
+        viewMode = mode;
+        const btnMonthly = document.getElementById('btn-monthly');
+        const btnYearly = document.getElementById('btn-yearly');
+        const monthlyView = document.getElementById('monthly-view');
+        const yearlyView = document.getElementById('yearly-view');
+
+        if (mode === 'monthly') {
+            btnMonthly.className = "px-4 py-2 rounded-lg bg-stone-900 text-white shadow-lg transition-all";
+            btnYearly.className = "px-4 py-2 rounded-lg text-stone-500 hover:bg-stone-50 transition-all";
+            monthlyView.classList.remove('hide');
+            yearlyView.classList.add('hide');
+            renderCalendar();
+        } else {
+            btnYearly.className = "px-4 py-2 rounded-lg bg-stone-900 text-white shadow-lg transition-all";
+            btnMonthly.className = "px-4 py-2 rounded-lg text-stone-500 hover:bg-stone-50 transition-all";
+            monthlyView.classList.add('hide');
+            yearlyView.classList.remove('hide');
+            renderYearly();
+        }
+    }
+
+    function renderCalendar() {
+        if (viewMode !== 'monthly') return;
+        const grid = document.getElementById('calendar-grid');
+        const monthTitle = document.getElementById('month-title');
+        const jawaTitle = document.getElementById('jawa-title');
+        const holidayListEl = document.getElementById('holiday-list');
+        
+        grid.innerHTML = '';
+        holidayListEl.innerHTML = '';
+        
+        ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].forEach((h, i) => {
+            grid.innerHTML += `<div class="py-4 text-center text-[10px] uppercase font-black tracking-widest bg-stone-50 ${i===0?'text-red-500':'text-stone-400'}">${h}</div>`;
+        });
+
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const todayStr = new Date().toDateString();
+
+        monthTitle.innerText = `${BULAN[month]} ${year}`;
+        jawaTitle.innerText = `Sasi ${BULAN_JAWA[month]}`;
+
+        for(let i=0; i<firstDay; i++) grid.innerHTML += `<div class="h-24 md:h-32 bg-stone-50/30"></div>`;
+        
+        let foundHolidays = [];
+
+        for(let i=1; i<=daysInMonth; i++) {
+            const date = new Date(year, month, i);
+            const dateStr = date.toDateString();
+            const dateKey = formatDateKey(date);
+            const isSel = dateStr === selectedDate.toDateString();
+            const isToday = dateStr === todayStr;
+            const pasaran = getPasaran(date);
+            const hasAgenda = agendas[dateStr];
+            const isHoliday = HARI_LIBUR_2026[dateKey];
+            
+            if (isHoliday) foundHolidays.push({ day: i, name: isHoliday });
+            
+            grid.innerHTML += `
+                <div onclick="selectDate(${year}, ${month}, ${i})" class="h-24 md:h-32 p-3 cursor-pointer flex flex-col justify-between relative border-r border-b border-stone-100 transition-all ${isSel ? 'bg-amber-50 ring-4 ring-amber-500/20 z-10' : (isToday ? 'bg-emerald-50' : 'bg-white hover:bg-stone-50')}">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xl font-bold ${ (date.getDay()===0 || isHoliday) ? 'text-red-600' : 'text-stone-800'}">${i}</span>
+                        <div class="flex flex-col gap-1 items-end">
+                            ${hasAgenda ? '<div class="w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>' : ''}
+                            ${isHoliday ? '<div class="w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white shadow-sm"></div>' : ''}
+                            ${isToday ? '<div class="w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>' : ''}
+                        </div>
+                    </div>
+                    <span class="text-[10px] px-2 py-1 rounded-lg uppercase font-black w-fit ${isToday ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-600'}">${pasaran}</span>
+                </div>
+            `;
+        }
+
+        // Render Holiday List Footer
+        if (foundHolidays.length > 0) {
+            foundHolidays.forEach(h => {
+                holidayListEl.innerHTML += `
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 flex items-center justify-center bg-red-100 text-red-600 rounded-lg text-xs font-black shrink-0">${h.day}</span>
+                        <p class="text-sm font-bold text-stone-700 leading-tight">${h.name}</p>
+                    </div>
+                `;
+            });
+        } else {
+            holidayListEl.innerHTML = `<p class="text-xs italic text-stone-400">Tidak ada hari besar nasional di bulan ini.</p>`;
+        }
+    }
+
+    function renderYearly() {
+        const yearlyGrid = document.getElementById('yearly-view');
+        yearlyGrid.innerHTML = '';
+        const year = currentDate.getFullYear();
+
+        BULAN.forEach((mName, mIdx) => {
+            const firstDay = new Date(year, mIdx, 1).getDay();
+            const daysInMonth = new Date(year, mIdx + 1, 0).getDate();
+            
+            let daysHtml = '';
+            for(let i=0; i<firstDay; i++) daysHtml += '<div></div>';
+            for(let i=1; i<=daysInMonth; i++) {
+                const date = new Date(year, mIdx, i);
+                const dateKey = formatDateKey(date);
+                const isToday = date.toDateString() === new Date().toDateString();
+                const hasAgenda = agendas[date.toDateString()];
+                const isHoliday = HARI_LIBUR_2026[dateKey];
+                
+                daysHtml += `
+                    <div onclick="selectFromYear(${year},${mIdx},${i})" 
+                         class="text-[8px] p-0.5 text-center cursor-pointer hover:bg-amber-100 rounded relative 
+                         ${isToday ? 'bg-emerald-200 font-bold' : ''} 
+                         ${(date.getDay() === 0 || isHoliday) ? 'text-red-500' : ''}">
+                        ${i}
+                        ${hasAgenda ? '<span class="absolute top-0 right-0 w-1 h-1 bg-blue-500 rounded-full"></span>' : ''}
+                    </div>`;
+            }
+
+            yearlyGrid.innerHTML += `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-200 ${mIdx === new Date().getMonth() && year === new Date().getFullYear() ? 'ring-2 ring-emerald-500/30 bg-emerald-50/10' : ''}">
+                    <h4 class="text-xs font-black mb-2 text-center border-b pb-1">${mName}</h4>
+                    <div class="grid grid-cols-7 gap-px text-[7px] font-bold text-stone-400 mb-1">
+                        <div class="text-red-500 text-center">M</div><div class="text-center">S</div><div class="text-center">S</div><div class="text-center">R</div><div class="text-center">K</div><div class="text-center">J</div><div class="text-center">S</div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-px">${daysHtml}</div>
+                </div>
+            `;
+        });
+    }
+
+    function selectFromYear(y, m, d) {
+        currentDate = new Date(y, m, d);
+        selectedDate = new Date(y, m, d);
+        changeView('monthly');
+        renderDetail();
+    }
+
+    function selectDate(y, m, d) {
+        selectedDate = new Date(y, m, d);
+        renderDetail();
+        renderCalendar();
+    }
+
+    function prevMonth() { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); }
+    function nextMonth() { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); }
+    function prevYear() { currentDate.setFullYear(currentDate.getFullYear() - 1); if(viewMode==='monthly') renderCalendar(); else renderYearly(); }
+    function nextYear() { currentDate.setFullYear(currentDate.getFullYear() + 1); if(viewMode==='monthly') renderCalendar(); else renderYearly(); }
+    function goToday() { currentDate = new Date(); selectedDate = new Date(); changeView('monthly'); renderDetail(); }
+
+    function saveAgenda() {
+        const val = document.getElementById('agenda-input').value;
+        const dateKey = selectedDate.toDateString();
+        if(val.trim()) agendas[dateKey] = val;
+        else delete agendas[dateKey];
+        localStorage.setItem('kal_agendas', JSON.stringify(agendas));
+        renderCalendar();
+        const btn = event.target;
+        const originalText = btn.innerText;
+        btn.innerText = "Tersimpan!";
+        setTimeout(() => btn.innerText = originalText, 1500);
+    }
+
+    function deleteAgenda() {
+        const dateKey = selectedDate.toDateString();
+        delete agendas[dateKey];
+        localStorage.setItem('kal_agendas', JSON.stringify(agendas));
+        document.getElementById('agenda-input').value = '';
+        renderCalendar();
+    }
+
+    function checkWeton() {
+        const val = document.getElementById('check-date').value;
+        if(!val) return;
+        const d = new Date(val);
+        const res = document.getElementById('weton-result');
+        res.classList.remove('hidden');
+        res.innerHTML = `<p class="text-[10px] text-stone-400 uppercase font-bold mb-2">Hasil Weton Lahir:</p>
+                         <p class="text-2xl font-black text-amber-400">${HARI[d.getDay()]} ${getPasaran(d)}</p>`;
+    }
+
+    window.onload = () => { renderDetail(); renderCalendar(); };
+</script>
+
+</body>
+</html>
