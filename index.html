@@ -3,18 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalender Jawa & Primbon Lengkap</title>
-<link rel="manifest" href="manifest.json">
+    <title>Kalender Jawa & Primbon Lengkap ✨ AI Powered</title>
 <meta name="theme-color" content="#78350f">
 <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3652/3652191.png">
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js');
-    });
-  }
-</script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -35,6 +27,26 @@
             border: 2px dashed #d6d3d1;
             border-radius: 1.5rem;
             overflow: hidden;
+        }
+        .ad-small-box {
+            min-height: 90px;
+            background-color: #ffffff;
+            border: 1px solid #e7e5e4;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .ai-shimmer {
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
 </head>
@@ -63,6 +75,23 @@
         <div class="mt-6 flex flex-col items-center justify-center">
             <div class="bg-stone-900 text-white px-10 py-4 rounded-2xl shadow-2xl transform -rotate-1">
                 <p id="sel-full-hari" class="text-3xl md:text-4xl font-black tracking-tight"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- KOLOM IKLAN KECIL -->
+    <div class="ad-small-box shadow-sm animate-zoom p-2">
+        <div class="text-center w-full">
+            <span class="text-[9px] text-stone-300 absolute top-1 left-1 uppercase font-bold tracking-tighter">Advertisement</span>
+            <div class="flex justify-center items-center">
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:320px;height:50px"
+                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                     data-ad-slot="XXXXXXXXXX"></ins>
+                <script>
+                     try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+                </script>
+                <p class="text-[11px] text-stone-400 italic">Iklan Baris / Display 320x50</p>
             </div>
         </div>
     </div>
@@ -99,8 +128,8 @@
                 </div>
                 <div id="calendar-grid" class="grid grid-cols-7 bg-stone-100 gap-px p-px"></div>
                 <div id="monthly-holiday-footer" class="p-6 bg-stone-50 border-t border-stone-100">
-                    <h4 class="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-3">Hari Peringatan Bulan Ini</h4>
-                    <div id="holiday-list" class="space-y-2"></div>
+                    <h4 class="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-3">Hari Libur & Peringatan Bulan Ini</h4>
+                    <div id="holiday-list" class="flex flex-wrap gap-2 text-xs"></div>
                 </div>
             </div>
 
@@ -109,22 +138,32 @@
                 <div class="flex border-b border-stone-100 mb-8 overflow-x-auto">
                     <button onclick="switchTab('weton')" id="tab-weton" class="px-6 py-4 font-black uppercase tracking-widest text-xs tab-active whitespace-nowrap">Cek Weton</button>
                     <button onclick="switchTab('jodoh')" id="tab-jodoh" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-stone-400 whitespace-nowrap">Weton Jodoh</button>
-                    <button onclick="switchTab('kematian')" id="tab-kematian" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-stone-400 whitespace-nowrap">Selamatan</button>
                     <button onclick="switchTab('nogodino')" id="tab-nogodino" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-stone-400 whitespace-nowrap">Nogo Dino</button>
+                    <button onclick="switchTab('pakar')" id="tab-pakar" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-amber-600 whitespace-nowrap">Ki Sepuh ✨</button>
+                    <button onclick="switchTab('kematian')" id="tab-kematian" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-stone-400 whitespace-nowrap">Selamatan</button>
                 </div>
 
-                <!-- Judul Konteks -->
                 <p id="calc-context-label" class="text-amber-600 font-bold text-[10px] uppercase mb-4">Pilih Tanggal Lahir</p>
 
-                <!-- Template Input Manual (Shared) -->
+                <div id="pakar-input-view" class="hide space-y-6">
+                    <div class="bg-amber-50 p-6 rounded-3xl border border-amber-200">
+                        <h4 class="font-black text-amber-800 mb-2">Ki Sepuh ✨</h4>
+                        <p class="text-sm text-amber-700/80 leading-relaxed mb-4">Tanyakan apa saja seputar ramalan, nasihat hidup, atau cara mencari hari baik menurut tradisi Jawa kepada Ki Sepuh.</p>
+                        <textarea id="ai-query" placeholder="Contoh: Bagaimana cara meningkatkan aura rezeki untuk weton Senin Pon?" class="w-full h-32 p-4 bg-white border border-amber-200 rounded-2xl focus:ring-4 focus:ring-amber-500/20 outline-none text-sm resize-none"></textarea>
+                        <button onclick="consultAI()" class="mt-4 w-full py-4 bg-amber-600 text-white font-black rounded-2xl shadow-lg hover:bg-amber-700 transition flex items-center justify-center gap-2">
+                            <span>Tanya Ki Sepuh ✨</span>
+                        </button>
+                    </div>
+                </div>
+
                 <div id="input-container" class="grid grid-cols-3 gap-4 mb-6">
                     <div>
                         <label class="block text-[10px] font-black text-stone-400 mb-2 uppercase">Tanggal</label>
-                        <input type="number" id="manual-tgl" value="21" min="1" max="31" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none focus:ring-2 focus:ring-amber-500 font-bold">
+                        <input type="number" id="manual-tgl" value="21" min="1" max="31" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none font-bold">
                     </div>
                     <div>
                         <label class="block text-[10px] font-black text-stone-400 mb-2 uppercase">Bulan</label>
-                        <select id="manual-bln" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none focus:ring-2 focus:ring-amber-500 font-bold">
+                        <select id="manual-bln" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none font-bold">
                             <option value="0">Januari</option><option value="1">Februari</option>
                             <option value="2">Maret</option><option value="3">April</option>
                             <option value="4">Mei</option><option value="5">Juni</option>
@@ -135,20 +174,21 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-black text-stone-400 mb-2 uppercase">Tahun</label>
-                        <input type="number" id="manual-thn" value="1995" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none focus:ring-2 focus:ring-amber-500 font-bold">
+                        <input type="number" id="manual-thn" value="1995" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none font-bold">
                     </div>
                 </div>
 
-                <!-- Panel Khusus Jodoh & Nogo Dino Personal -->
                 <div id="extra-person" class="hide mb-6 space-y-4">
                     <p id="extra-label" class="font-black text-amber-600 text-[10px] uppercase">Data Pasangan</p>
                     <div class="grid grid-cols-3 gap-4">
                         <input type="number" id="extra-tgl" value="1" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none font-bold">
                         <select id="extra-bln" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none font-bold">
-                            <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
-                            <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
-                            <option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option>
-                            <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
+                            <option value="0">Januari</option><option value="1">Februari</option>
+                            <option value="2">Maret</option><option value="3">April</option>
+                            <option value="4">Mei</option><option value="5">Juni</option>
+                            <option value="6">Juli</option><option value="7">Agustus</option>
+                            <option value="8">September</option><option value="9">Oktober</option>
+                            <option value="10">November</option><option value="11">Desember</option>
                         </select>
                         <input type="number" id="extra-thn" value="1995" class="calc-input w-full p-4 bg-stone-50 rounded-2xl border border-stone-200 outline-none font-bold">
                     </div>
@@ -156,8 +196,11 @@
 
                 <button id="calc-btn" onclick="executeCalculation()" class="w-full py-5 bg-stone-900 text-white font-black rounded-2xl shadow-xl hover:bg-stone-800 transition">Hitung Sekarang</button>
                 
-                <!-- Container Hasil -->
                 <div id="res-container" class="mt-8 p-0 bg-transparent rounded-3xl hidden animate-zoom"></div>
+                <div id="ai-loading" class="hide mt-8 p-12 bg-stone-50 rounded-3xl border border-stone-200 text-center space-y-4">
+                    <div class="w-12 h-12 border-4 border-amber-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <p class="text-xs font-black uppercase text-stone-400">Ki Sepuh sedang menelaah kitab ✨...</p>
+                </div>
             </div>
         </div>
 
@@ -173,20 +216,30 @@
                 </div>
             </div>
 
+            <!-- SLOT IKLAN SIDEBAR -->
             <div class="bg-white rounded-3xl shadow-xl p-6 border border-stone-200">
-                <h3 class="font-black uppercase tracking-widest text-[10px] text-stone-400 mb-4 text-center">Sponsored Content / Ads</h3>
-                <div class="ad-slot-container">
-                    <div id="ad-content-wrapper" class="w-full text-center p-2 text-stone-400 text-[10px] italic">
-                        <p>Ruang Iklan</p>
+                <h3 class="font-black uppercase tracking-widest text-[10px] text-stone-400 mb-4 text-center">Sponsored Content</h3>
+                <div class="ad-slot-container" style="min-height: 200px;">
+                    <div class="text-center w-full">
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                             data-ad-slot="XXXXXXXXXX"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                        <script>
+                             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+                        </script>
+                        <p class="text-[11px] text-stone-300 italic">Iklan Sidebar</p>
                     </div>
                 </div>
-                <p class="text-[9px] text-stone-300 mt-4 text-center italic tracking-tight">Iklan membantu kami menyediakan layanan gratis.</p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    const apiKey = ""; 
     const PASARAN = ['Legi', 'Pahing', 'Pon', 'Wage', 'Kliwon'];
     const HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     const BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -202,25 +255,21 @@
 
     const SHIO = ["Monyet", "Ayam", "Anjing", "Babi", "Tikus", "Kerbau", "Macan", "Kelinci", "Naga", "Ular", "Kuda", "Kambing"];
     const ELEMEN = ["Logam", "Logam", "Air", "Air", "Kayu", "Kayu", "Api", "Api", "Tanah", "Tanah"];
-    const PITUTUR = [
-        "Sabar iku kuncining swarga.", "Alon-alon waton kelakon.", "Urip iku urup (Hidup itu menyala).",
-        "Wong jujur luhur wekasane.", "Mulyo iku asale saka rekoso.", "Nerimo ing pandum."
-    ];
-
-    // Data Rejeki Berdasarkan Neptu & Siklus Usia (Dimodifikasi untuk narasi positif)
-    const RAMALAN_REJEKI = {
-        bagus: [
-            "Ini adalah masa panen bagi usaha Anda. Fokuslah pada ekspansi.",
-            "Langkah besar Anda mulai menunjukkan hasil nyata. Pertahankan semangat!",
-            "Rezeki mengalir dari arah yang terduga. Waktunya mewujudkan target besar.",
-            "Wibawa dan keberuntungan sedang di pihak Anda. Orang lain akan mendukung rencana Anda."
-        ],
-        saran: [
-            "Hemat untuk modal masa depan yang lebih besar.",
-            "Perbaiki manajemen agar rezeki yang masuk tidak sekadar lewat.",
-            "Berbagi dengan sesama akan membuka pintu rezeki yang lebih lebar."
-        ]
+    
+    const INDO_HOLIDAYS = {
+        "fixed": { "01-01": "Tahun Baru Masehi", "05-01": "Hari Buruh Internasional", "06-01": "Hari Lahir Pancasila", "08-17": "Hari Kemerdekaan RI", "12-25": "Hari Raya Natal" },
+        "2025": { "01-27": "Isra Mi'raj", "01-29": "Tahun Baru Imlek", "03-29": "Hari Suci Nyepi", "03-31": "Idul Fitri", "04-01": "Idul Fitri", "04-18": "Wafat Yesus Kristus", "04-20": "Hari Paskah", "05-12": "Hari Raya Waisak", "05-29": "Kenaikan Yesus Kristus", "06-06": "Idul Adha", "06-27": "Tahun Baru Islam", "09-05": "Maulid Nabi" },
+        "2026": { "02-14": "Isra Mi'raj", "02-17": "Tahun Baru Imlek", "03-19": "Hari Suci Nyepi", "03-20": "Idul Fitri", "03-21": "Idul Fitri", "04-03": "Wafat Yesus Kristus", "04-05": "Hari Paskah", "05-14": "Kenaikan Yesus Kristus", "05-27": "Idul Adha", "05-31": "Hari Raya Waisak", "06-16": "Tahun Baru Islam", "08-25": "Maulid Nabi" }
     };
+
+    function getHoliday(date) {
+        const d = new Date(date);
+        const mmdd = `${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const year = d.getFullYear().toString();
+        if (INDO_HOLIDAYS.fixed[mmdd]) return INDO_HOLIDAYS.fixed[mmdd];
+        if (INDO_HOLIDAYS[year] && INDO_HOLIDAYS[year][mmdd]) return INDO_HOLIDAYS[year][mmdd];
+        return null;
+    }
 
     const REF_EPOCH = new Date(1970, 0, 1);
     const REF_PASARAN_EPOCH = 3; 
@@ -231,6 +280,26 @@
     let currentDate = new Date();
     let selectedDate = new Date();
     let agendas = JSON.parse(localStorage.getItem('kal_agendas') || '{}');
+
+    async function askGemini(prompt, systemInstruction = "Anda adalah Ki Sepuh, pakar Primbon Jawa yang sangat bijaksana. Jawab dalam Bahasa Indonesia yang santun dan informatif.") {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: systemInstruction }] } };
+        for (let i = 0; i < 5; i++) {
+            try {
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error("API Request Failed");
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, Ki Sepuh sedang bertapa.";
+            } catch (e) { await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000)); }
+        }
+        return "Gagal terhubung dengan Ki Sepuh. Silakan coba lagi nanti.";
+    }
+
+    function shareToWhatsApp(text) {
+        const fullText = `${text}\n\n_Dikirim dari Kalender Jawa & Primbon Ki Sepuh ✨_`;
+        const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`;
+        window.open(url, '_blank');
+    }
 
     function getJawaData(date) {
         const d = new Date(date); d.setHours(0,0,0,0);
@@ -246,13 +315,11 @@
         if (diffFromRef >= 0) {
             while (totalJawaDays > (BULAN_JAWA[curBlnIdx]?.hari || 30)) {
                 totalJawaDays -= BULAN_JAWA[curBlnIdx]?.hari || 30;
-                curBlnIdx++;
-                if (curBlnIdx > 11) { curBlnIdx = 0; curThn++; }
+                curBlnIdx++; if (curBlnIdx > 11) { curBlnIdx = 0; curThn++; }
             }
         } else {
             while (totalJawaDays <= 0) {
-                curBlnIdx--;
-                if (curBlnIdx < 0) { curBlnIdx = 11; curThn--; }
+                curBlnIdx--; if (curBlnIdx < 0) { curBlnIdx = 11; curThn--; }
                 totalJawaDays += BULAN_JAWA[curBlnIdx]?.hari || 30;
             }
         }
@@ -263,44 +330,52 @@
         const today = new Date();
         let age = today.getFullYear() - birthDate.getFullYear();
         const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
         return age;
     }
 
     function switchTab(tab) {
         activeTab = tab;
-        ['weton', 'jodoh', 'kematian', 'nogodino'].forEach(t => {
-            document.getElementById(`tab-${t}`).classList.toggle('tab-active', t === tab);
-            document.getElementById(`tab-${t}`).classList.toggle('text-stone-400', t !== tab);
+        ['weton', 'jodoh', 'kematian', 'nogodino', 'pakar'].forEach(t => {
+            const btn = document.getElementById(`tab-${t}`);
+            if (btn) { btn.classList.toggle('tab-active', t === tab); btn.classList.toggle('text-stone-400', t !== tab && t !== 'pakar'); }
         });
         
         const extraPanel = document.getElementById('extra-person');
         const extraLabel = document.getElementById('extra-label');
         const contextLabel = document.getElementById('calc-context-label');
+        const inputContainer = document.getElementById('input-container');
+        const calcBtn = document.getElementById('calc-btn');
+        const pakarView = document.getElementById('pakar-input-view');
+
+        if (pakarView) pakarView.classList.toggle('hide', tab !== 'pakar');
+        if (inputContainer) inputContainer.classList.toggle('hide', tab === 'pakar');
+        if (calcBtn) calcBtn.classList.toggle('hide', tab === 'pakar');
 
         if (tab === 'jodoh') {
-            extraPanel.classList.remove('hide');
-            extraLabel.innerText = "Data Pasangan (Tanggal Lahir)";
-            contextLabel.innerText = "Pilih Tanggal Lahir Anda";
+            if (extraPanel) extraPanel.classList.remove('hide');
+            if (extraLabel) extraLabel.innerText = "Data Pasangan (Tanggal Lahir)";
+            if (contextLabel) contextLabel.innerText = "Pilih Tanggal Lahir Anda";
         } else if (tab === 'nogodino') {
-            extraPanel.classList.remove('hide');
-            extraLabel.innerText = "Tanggal Lahir Anda (Opsional)";
-            contextLabel.innerText = "Pilih Tanggal Kejadian / Keberangkatan";
+            if (extraPanel) extraPanel.classList.remove('hide');
+            if (extraLabel) extraLabel.innerText = "Tanggal Lahir Anda (Opsional)";
+            if (contextLabel) contextLabel.innerText = "Pilih Tanggal Kejadian / Keberangkatan";
+        } else if (tab === 'pakar') {
+            if (extraPanel) extraPanel.classList.add('hide');
+            if (contextLabel) contextLabel.innerText = "Konsultasi Khusus";
         } else {
-            extraPanel.classList.add('hide');
-            contextLabel.innerText = tab === 'kematian' ? "Pilih Tanggal Meninggal" : "Pilih Tanggal Lahir";
+            if (extraPanel) extraPanel.classList.add('hide');
+            if (contextLabel) contextLabel.innerText = tab === 'kematian' ? "Pilih Tanggal Meninggal" : "Pilih Tanggal Lahir";
         }
 
-        document.getElementById('res-container').classList.add('hidden');
+        const resContainer = document.getElementById('res-container');
+        if (resContainer) resContainer.classList.add('hidden');
     }
 
-    function executeCalculation() {
-        const tgl = parseInt(document.getElementById('manual-tgl').value);
-        const bln = parseInt(document.getElementById('manual-bln').value);
-        const thn = parseInt(document.getElementById('manual-thn').value);
-        const d = new Date(thn, bln, tgl);
+    async function executeCalculation() {
+        const tInput = document.getElementById('manual-tgl'), bInput = document.getElementById('manual-bln'), hInput = document.getElementById('manual-thn');
+        if(!tInput || !bInput || !hInput) return;
+        const d = new Date(hInput.value, bInput.value, tInput.value);
         if (isNaN(d.getTime())) return;
 
         const res = document.getElementById('res-container');
@@ -310,100 +385,84 @@
         if (activeTab === 'weton') hitungWeton(d, res);
         else if (activeTab === 'jodoh') hitungJodoh(d, res);
         else if (activeTab === 'kematian') hitungKematian(d, res);
-        else if (activeTab === 'nogodino') hitungNogoDino(d, res);
+        else if (activeTab === 'nogodino') {
+            const et = document.getElementById('extra-tgl'), eb = document.getElementById('extra-bln'), eh = document.getElementById('extra-thn');
+            const birthD = new Date(eh.value, eb.value, et.value);
+            hitungNogoDino(d, res, birthD);
+        }
     }
 
     function hitungWeton(birthDate, el) {
-        const jd = getJawaData(birthDate);
-        const age = calculateAge(birthDate);
-        const shio = SHIO[birthDate.getFullYear() % 12];
-        const ele = ELEMEN[birthDate.getFullYear() % 10];
-        
-        // Logika Siklus Rejeki Pal Srigati (Disederhanakan & Dinarasikan Positif)
-        const siklusIndeks = (jd.neptu + (age % 6)) % RAMALAN_REJEKI.bagus.length;
-        const ramalanText = RAMALAN_REJEKI.bagus[siklusIndeks];
-        const saranText = RAMALAN_REJEKI.saran[age % RAMALAN_REJEKI.saran.length];
-
+        const jd = getJawaData(birthDate), age = calculateAge(birthDate), shio = SHIO[birthDate.getFullYear() % 12], ele = ELEMEN[birthDate.getFullYear() % 10];
+        const summaryText = `Weton: ${HARI[birthDate.getDay()]} ${jd.pasaran}, Neptu: ${jd.neptu}, Shio: ${shio}`;
         el.innerHTML = `
             <div class="space-y-6">
-                <!-- Header Weton & Usia -->
                 <div class="bg-stone-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
                     <div class="flex justify-between items-start mb-8">
-                        <div>
-                            <p class="text-amber-500 font-black uppercase text-[10px] tracking-[0.2em] mb-1">Hasil Analisa Weton</p>
-                            <h4 class="text-4xl font-black tracking-tighter">${HARI[birthDate.getDay()]} ${jd.pasaran}</h4>
-                            <p class="text-stone-400 font-bold text-xs mt-1 uppercase tracking-widest">${jd.tgl} ${jd.bulan} ${jd.tahun} AJ</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="bg-amber-600 px-4 py-2 rounded-xl inline-block mb-2">
-                                <p class="text-[10px] uppercase font-black text-amber-100 leading-none">Usia Saat Ini</p>
-                                <p class="text-2xl font-black">${age} <span class="text-sm">Tahun</span></p>
-                            </div>
-                            <div class="block">
-                                <p class="text-[10px] uppercase font-black opacity-50">Neptu</p>
-                                <p class="text-2xl font-black text-amber-400">${jd.neptu}</p>
-                            </div>
-                        </div>
+                        <div><p class="text-amber-500 font-black uppercase text-[10px] tracking-[0.2em] mb-1">Hasil Analisa Weton</p><h4 class="text-4xl font-black tracking-tighter">${HARI[birthDate.getDay()]} ${jd.pasaran}</h4><p class="text-stone-400 font-bold text-xs mt-1 uppercase tracking-widest">${jd.tgl} ${jd.bulan} ${jd.tahun} AJ</p></div>
+                        <div class="text-right"><div class="bg-amber-600 px-4 py-2 rounded-xl inline-block mb-2"><p class="text-[10px] uppercase font-black text-amber-100 leading-none">Usia</p><p class="text-2xl font-black">${age}</p></div><div class="block"><p class="text-2xl font-black text-amber-400">${jd.neptu}</p></div></div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
-                            <p class="text-[10px] uppercase opacity-50 font-bold mb-1">Shio</p>
-                            <p class="font-black text-xl">${shio}</p>
-                        </div>
-                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
-                            <p class="text-[10px] uppercase opacity-50 font-bold mb-1">Elemen</p>
-                            <p class="font-black text-xl">${ele}</p>
-                        </div>
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10"><p class="text-[10px] opacity-50 mb-1">Shio</p><p class="font-black text-xl">${shio}</p></div>
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10"><p class="text-[10px] opacity-50 mb-1">Elemen</p><p class="font-black text-xl">${ele}</p></div>
                     </div>
                 </div>
-
-                <!-- Ramalan Rejeki & Karir -->
-                <div class="bg-amber-50 rounded-[2.5rem] p-8 border border-amber-100 shadow-sm relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-8 opacity-10">
-                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                    <h5 class="text-amber-700 font-black text-xs uppercase mb-4 tracking-[0.2em]">Potensi Rejeki di Usia ${age}</h5>
-                    <div class="space-y-4 relative z-10">
-                        <p class="text-2xl font-black text-stone-900 leading-tight">"${ramalanText}"</p>
-                        <div class="flex gap-2">
-                            <span class="bg-amber-200 text-amber-800 px-3 py-1 rounded-full text-[10px] font-black uppercase">Keberuntungan</span>
-                            <span class="bg-amber-200 text-amber-800 px-3 py-1 rounded-full text-[10px] font-black uppercase">Peluang Usaha</span>
-                        </div>
-                        <div class="mt-6 pt-6 border-t border-amber-200/50">
-                            <p class="text-[10px] font-black text-stone-400 uppercase mb-2">Saran Primbon</p>
-                            <p class="text-stone-600 italic text-sm font-medium leading-relaxed">${saranText} Mengelola aset dengan bijak akan sangat menunjang target besar (seperti peternakan atau investasi mandiri).</p>
-                        </div>
-                    </div>
+                <div class="flex flex-col gap-3">
+                    <button onclick="deepWetonAI('${HARI[birthDate.getDay()]} ${jd.pasaran}', ${jd.neptu}, '${shio}')" class="w-full py-4 bg-amber-100 text-amber-800 border border-amber-200 rounded-2xl font-black text-sm hover:bg-amber-200 transition">Analisa Karakter Mendalam ✨</button>
+                    <button onclick="shareToWhatsApp('${summaryText}')" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-sm hover:bg-emerald-700 transition flex items-center justify-center gap-2">Bagikan ke WhatsApp 📱</button>
                 </div>
-
-                <!-- Pitutur Luhur -->
-                <div class="bg-stone-50 p-6 rounded-3xl border border-stone-200 border-dashed text-center">
-                    <p class="text-[9px] font-black uppercase text-stone-400 mb-1">Pedoman Hidup</p>
-                    <p class="text-lg font-black text-stone-800 italic">"${PITUTUR[birthDate.getDate() % PITUTUR.length]}"</p>
-                </div>
+                <div id="ai-weton-res" class="hide p-6 bg-white border border-stone-200 rounded-3xl text-sm leading-relaxed"></div>
             </div>`;
     }
 
     function hitungJodoh(d1, el) {
-        const tgl2 = parseInt(document.getElementById('extra-tgl').value);
-        const bln2 = parseInt(document.getElementById('extra-bln').value);
-        const thn2 = parseInt(document.getElementById('extra-thn').value);
-        const d2 = new Date(thn2, bln2, tgl2);
-        const jd1 = getJawaData(d1);
-        const jd2 = getJawaData(d2);
-        const total = jd1.neptu + jd2.neptu;
-        const sisa = total % 8;
-        const hasil = ["PESHTI", "PEGAT", "RATU", "JODOH", "TOPO", "TINARI", "PADU", "SUJANAN"];
-        const desc = [
-            "Rukun & Harmonis selalu.", "Sering ada masalah (Cerai/Pisah).", "Dihormati & Beruntung rezekinya.",
-            "Sangat Cocok, damai sejahtera.", "Sering sulit di awal, bahagia di akhir.", "Murah rezeki & banyak anak.",
-            "Sering cekcok mulut tapi tidak cerai.", "Banyak godaan dari pihak ketiga."
-        ];
+        const et = document.getElementById('extra-tgl'), eb = document.getElementById('extra-bln'), eh = document.getElementById('extra-thn');
+        const d2 = new Date(eh.value, eb.value, et.value);
+        const jd1 = getJawaData(d1), jd2 = getJawaData(d2), total = jd1.neptu + jd2.neptu, sisa = total % 8;
+        const hasil = ["PESHTI", "PEGAT", "RATU", "JODOH", "TOPO", "TINARI", "PADU", "SUJANAN"], desc = ["Harmonis selalu.", "Sering masalah.", "Beruntung rezekinya.", "Sangat Cocok.", "Sulit di awal.", "Murah rezeki.", "Cekcok mulut.", "Godaan ketiga."];
         el.innerHTML = `
             <div class="bg-white rounded-3xl p-8 border border-stone-200 text-center animate-zoom shadow-xl">
-                <p class="text-[10px] font-black uppercase text-amber-600 mb-2">Total Neptu: ${jd1.neptu} + ${jd2.neptu} = ${total}</p>
-                <h4 class="text-5xl font-black text-stone-900 mb-2 tracking-tighter">${hasil[sisa]}</h4>
-                <p class="text-sm text-stone-500 mb-8 italic">"${desc[sisa]}"</p>
+                <p class="text-[10px] font-black uppercase text-amber-600 mb-2">Total Neptu: ${total}</p>
+                <h4 class="text-5xl font-black text-stone-900 mb-2 tracking-tighter">${hasil[sisa]}</h4><p class="text-sm text-stone-500 mb-6">"${desc[sisa]}"</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="askGemini('Jelaskan kecocokan jodoh neptu ${jd1.neptu} dan ${jd2.neptu} yang menghasilkan ${hasil[sisa]} dalam primbon jawa.').then(t => { const c = document.getElementById('ai-jodoh-res'); c.classList.remove('hide'); c.innerText = t; })" class="text-xs font-bold text-amber-600">Bedah Kecocokan ✨</button>
+                    <button onclick="shareToWhatsApp('Hasil Cek Jodoh: ${hasil[sisa]} (${desc[sisa]}). Total Neptu Kami: ${total}')" class="text-xs font-bold text-emerald-600">Bagikan Hasil 📱</button>
+                </div>
+                <div id="ai-jodoh-res" class="hide mt-4 p-4 bg-stone-50 rounded-2xl text-left text-xs italic"></div>
+            </div>`;
+    }
+
+    function hitungNogoDino(d, el, birthD) {
+        const jd = getJawaData(d), nogoMap = { 'Legi': 'Timur', 'Pahing': 'Selatan', 'Pon': 'Barat', 'Wage': 'Utara', 'Kliwon': 'Tengah' };
+        const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+        const luckyNumbers = Array.from({length: 4}, (_, i) => (((seed * (i + 13)) % 90) + 10));
+        
+        let personalAnalysisBtn = "";
+        if (!isNaN(birthD.getTime())) {
+            const jdb = getJawaData(birthD);
+            personalAnalysisBtn = `<button onclick="aiPersonalNogoDino('${HARI[birthD.getDay()]} ${jdb.pasaran}', '${HARI[d.getDay()]} ${jd.pasaran}', '${nogoMap[jd.pasaran]}')" class="text-xs font-bold text-amber-600 hover:underline">Analisa Personal oleh Ki Sepuh ✨</button>`;
+        }
+
+        el.innerHTML = `
+            <div class="animate-zoom space-y-6">
+                <div class="p-8 bg-amber-50 border-2 border-amber-200 rounded-[2.5rem] text-center shadow-inner">
+                    <p class="text-[10px] font-black uppercase text-amber-600 mb-4">Arah Naga (${HARI[d.getDay()]} ${jd.pasaran})</p>
+                    <h4 class="text-4xl font-black text-stone-900 mb-2 tracking-tight">${nogoMap[jd.pasaran]}</h4>
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <div class="p-4 bg-white rounded-2xl shadow-sm border border-stone-100"><p class="text-[9px] font-bold text-stone-400 uppercase mb-1">Arah Jaya</p><p class="text-sm font-black text-emerald-600 uppercase">${nogoMap[jd.pasaran] === 'Utara' ? 'Selatan' : 'Utara'}</p></div>
+                        <div class="p-4 bg-white rounded-2xl shadow-sm border border-stone-100"><p class="text-[9px] font-bold text-stone-400 uppercase mb-1">Arah Rezeki</p><p class="text-sm font-black text-blue-600 uppercase">${nogoMap[jd.pasaran] === 'Timur' ? 'Barat' : 'Timur'}</p></div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-[2.5rem] border border-stone-200 text-center shadow-lg relative overflow-hidden">
+                    <p class="text-[10px] font-black uppercase text-stone-400 mb-6 tracking-[0.2em]">Angka Hoki ✨</p>
+                    <div class="flex justify-center gap-3">${luckyNumbers.map(n => `<div class="w-14 h-14 bg-stone-900 rounded-2xl flex items-center justify-center shadow-xl"><span class="text-2xl font-black text-amber-400">${n}</span></div>`).join('')}</div>
+                    <div class="flex flex-col gap-3 mt-6">
+                        <button onclick="aiLuckyNumbers('${luckyNumbers.join(', ')}')" class="text-[10px] text-amber-600 font-bold uppercase">Tafsir Angka ✨</button>
+                        ${personalAnalysisBtn}
+                        <button onclick="shareToWhatsApp('Arah Naga: ${nogoMap[jd.pasaran]}. Angka Hoki: ${luckyNumbers.join(', ')}')" class="text-[10px] text-emerald-600 font-bold uppercase">Kirim ke WA 📱</button>
+                    </div>
+                    <div id="ai-lucky-res" class="hide mt-4 p-4 text-xs italic text-stone-500 bg-stone-50 rounded-xl"></div>
+                </div>
             </div>`;
     }
 
@@ -412,95 +471,75 @@
         const items = [{ l: '3 Hari', d: 3 }, { l: '7 Hari', d: 7 }, { l: '40 Hari', d: 40 }, { l: '100 Hari', d: 100 }, { l: 'Pendhak 1', d: 355 }, { l: '1000 Hari', d: 1000 }];
         let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
         items.forEach(i => {
-            const target = addDays(start, i.d);
-            const jd = getJawaData(target);
-            html += `<div class="p-5 bg-white border border-stone-200 rounded-3xl">
-                <p class="text-[10px] font-black text-amber-600 uppercase mb-1">${i.l}</p>
-                <p class="font-black text-stone-900 text-sm">${target.getDate()} ${BULAN[target.getMonth()]} ${target.getFullYear()}</p>
-                <p class="text-[10px] text-stone-400 font-bold">${HARI[target.getDay()]} ${jd.pasaran}</p>
-            </div>`;
+            const target = addDays(start, i.d), jd = getJawaData(target);
+            html += `<div class="p-5 bg-white border border-stone-200 rounded-3xl"><p class="text-[10px] font-black text-amber-600 uppercase mb-1">${i.l}</p><p class="font-black text-stone-900 text-sm">${target.getDate()} ${BULAN[target.getMonth()]} ${target.getFullYear()}</p><p class="text-[10px] text-stone-400 font-bold">${HARI[target.getDay()]} ${jd.pasaran}</p></div>`;
         });
         el.innerHTML = html + '</div>';
     }
 
-    function hitungNogoDino(d, el) {
-        const jd = getJawaData(d);
-        const nogoMap = { 'Legi': 'Timur', 'Pahing': 'Selatan', 'Pon': 'Barat', 'Wage': 'Utara', 'Kliwon': 'Tengah' };
-        
-        el.innerHTML = `
-            <div class="animate-zoom">
-                <div class="p-8 bg-amber-50 border-2 border-amber-200 rounded-[2.5rem] text-center shadow-inner">
-                    <p class="text-[10px] font-black uppercase text-amber-600 mb-4">Arah Naga Hari (${HARI[d.getDay()]} ${jd.pasaran})</p>
-                    <h4 class="text-4xl font-black text-stone-900 mb-2 tracking-tight">${nogoMap[jd.pasaran]}</h4>
-                    <p class="text-xs text-stone-500 font-bold italic mb-6">"Hindari perjalanan menuju arah ini agar selamat."</p>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 bg-white rounded-2xl shadow-sm border border-stone-100">
-                            <p class="text-[9px] font-bold text-stone-400 uppercase mb-1">Arah Jaya</p>
-                            <p class="text-sm font-black text-emerald-600 uppercase">${nogoMap[jd.pasaran] === 'Utara' ? 'Selatan' : 'Utara'}</p>
-                        </div>
-                        <div class="p-4 bg-white rounded-2xl shadow-sm border border-stone-100">
-                            <p class="text-[9px] font-bold text-stone-400 uppercase mb-1">Arah Rezeki</p>
-                            <p class="text-sm font-black text-blue-600 uppercase">${nogoMap[jd.pasaran] === 'Timur' ? 'Barat' : 'Timur'}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
+    async function consultAI() {
+        const qInput = document.getElementById('ai-query'); if (!qInput || !qInput.value.trim()) return;
+        const loader = document.getElementById('ai-loading'), res = document.getElementById('res-container');
+        if (loader) loader.classList.remove('hide'); if (res) res.classList.add('hidden');
+        const answer = await askGemini(qInput.value);
+        if (loader) loader.classList.add('hide');
+        if (res) {
+            res.classList.remove('hidden');
+            res.innerHTML = `<div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-xl animate-zoom"><div class="flex items-center gap-2 mb-6"><div class="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center text-white text-xs font-black">KS</div><h4 class="font-black text-stone-800 uppercase text-xs tracking-widest">Analisa Ki Sepuh ✨</h4></div><div id="ai-answer-text" class="prose prose-stone text-sm leading-relaxed whitespace-pre-wrap mb-6">${answer}</div><div class="flex gap-3"><button onclick="shareToWhatsApp(document.getElementById('ai-answer-text').innerText)" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs">Kirim ke WA ✨</button><button onclick="document.getElementById('ai-query').value=''; document.getElementById('res-container').classList.add('hidden');" class="px-5 py-3 border border-stone-200 rounded-xl text-xs font-bold text-stone-400">Tutup</button></div></div>`;
+        }
+    }
+
+    async function deepWetonAI(weton, neptu, shio) {
+        const display = document.getElementById('ai-weton-res'); if (!display) return;
+        display.classList.remove('hide'); display.innerHTML = `<div class="ai-shimmer h-20 rounded-xl w-full"></div>`;
+        const answer = await askGemini(`Ki Sepuh, tolong jelaskan secara mendalam karakter personil dengan weton ${weton} (Neptu ${neptu}) dan Shio ${shio}.`);
+        display.innerHTML = `<div class="space-y-4"><p id="ai-weton-detail-text" class="italic">${answer}</p><button onclick="shareToWhatsApp(document.getElementById('ai-weton-detail-text').innerText)" class="text-xs font-bold text-emerald-600 underline">Kirim Analisa ke WA ✨</button></div>`;
+    }
+
+    async function aiLuckyNumbers(nums) {
+        const display = document.getElementById('ai-lucky-res'); if (!display) return;
+        display.classList.remove('hide'); display.innerText = "Menerawang makna angka...";
+        const answer = await askGemini(`Ki Sepuh, apa makna angka ${nums} hari ini bagi keselamatan dan rezeki?`);
+        display.innerHTML = `<div class="space-y-4"><p id="ai-lucky-detail-text" class="italic">${answer}</p><button onclick="shareToWhatsApp(document.getElementById('ai-lucky-detail-text').innerText)" class="text-[10px] font-bold text-emerald-600 underline">Kirim Tafsir ke WA ✨</button></div>`;
+    }
+
+    async function aiPersonalNogoDino(birthWeton, eventWeton, nogoDirection) {
+        const display = document.getElementById('ai-lucky-res'); if (!display) return;
+        display.classList.remove('hide'); display.innerText = "Ki Sepuh sedang menyelaraskan weton Anda...";
+        const answer = await askGemini(`Ki Sepuh, seseorang lahir di weton ${birthWeton}. Hari ini keberangkatannya adalah weton ${eventWeton} dengan arah naga di ${nogoDirection}. Berikan saran keberangkatan yang selamat dan apakah arah tersebut cocok bagi pribadinya?`);
+        display.innerHTML = `<div class="space-y-4"><p id="ai-personal-nogo-text" class="italic text-amber-900">${answer}</p><button onclick="shareToWhatsApp(document.getElementById('ai-personal-nogo-text').innerText)" class="text-[10px] font-bold text-emerald-600 underline">Kirim Pesan Ki Sepuh ke WA ✨</button></div>`;
     }
 
     function renderDetail() {
-        const jd = getJawaData(selectedDate);
-        document.getElementById('sel-date').innerText = selectedDate.getDate();
-        document.getElementById('sel-month-year').innerText = `${BULAN[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
-        document.getElementById('sel-jawa').innerText = `${jd.tgl} ${jd.bulan} ${jd.tahun} AJ, ${jd.pasaran}`;
-        document.getElementById('sel-full-hari').innerHTML = `${HARI[selectedDate.getDay()]} <span class="text-amber-400">${jd.pasaran}</span>`;
-        document.getElementById('agenda-date-label').innerText = `Agenda: ${selectedDate.getDate()} ${BULAN[selectedDate.getMonth()]}`;
-        document.getElementById('agenda-input').value = agendas[selectedDate.toDateString()] || '';
-        document.getElementById('manual-tgl').value = selectedDate.getDate();
-        document.getElementById('manual-bln').value = selectedDate.getMonth();
-        document.getElementById('manual-thn').value = selectedDate.getFullYear();
+        const jd = getJawaData(selectedDate), holiday = getHoliday(selectedDate);
+        const elements = ['sel-date', 'sel-month-year', 'sel-jawa', 'sel-full-hari', 'agenda-date-label', 'agenda-input', 'manual-tgl', 'manual-bln', 'manual-thn'];
+        const values = [selectedDate.getDate(), `${BULAN[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`, `${jd.tgl} ${jd.bulan} ${jd.tahun} AJ, ${jd.pasaran}`, `${HARI[selectedDate.getDay()]} <span class="text-amber-400">${jd.pasaran}</span>`, `Agenda: ${selectedDate.getDate()} ${BULAN[selectedDate.getMonth()]}`, agendas[selectedDate.toDateString()] || '', selectedDate.getDate(), selectedDate.getMonth(), selectedDate.getFullYear()];
+        elements.forEach((id, i) => { const el = document.getElementById(id); if (el) { if (id === 'sel-full-hari') el.innerHTML = values[i]; else if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') el.value = values[i]; else el.innerText = values[i]; } });
+        const hEl = document.getElementById('sel-holiday'); if (hEl) hEl.innerText = holiday || "";
     }
 
     function renderCalendar() {
         if (viewMode !== 'monthly') return;
-        const grid = document.getElementById('calendar-grid');
-        grid.innerHTML = ''; 
-        ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].forEach((h, i) => {
-            grid.innerHTML += `<div class="py-4 text-center text-[10px] uppercase font-black bg-stone-50 ${i===0?'text-red-500':'text-stone-400'}">${h}</div>`;
-        });
-        const y = currentDate.getFullYear(), m = currentDate.getMonth();
-        const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate();
-        document.getElementById('month-title').innerText = `${BULAN[m]} ${y}`;
-        const sJ = getJawaData(new Date(y, m, 1)), eJ = getJawaData(new Date(y, m, days));
-        document.getElementById('jawa-title').innerText = `${sJ.bulan} - ${eJ.bulan} ${sJ.tahun}`;
+        const grid = document.getElementById('calendar-grid'); if (!grid) return;
+        grid.innerHTML = ''; ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].forEach((h, i) => { grid.innerHTML += `<div class="py-4 text-center text-[10px] uppercase font-black bg-stone-50 ${i===0?'text-red-500':'text-stone-400'}">${h}</div>`; });
+        const y = currentDate.getFullYear(), m = currentDate.getMonth(), first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate();
+        const mt = document.getElementById('month-title'), jt = document.getElementById('jawa-title');
+        if (mt) mt.innerText = `${BULAN[m]} ${y}`; const sJ = getJawaData(new Date(y, m, 1)), eJ = getJawaData(new Date(y, m, days)); if (jt) jt.innerText = `${sJ.bulan} - ${eJ.bulan} ${sJ.tahun}`;
+        const hl = document.getElementById('holiday-list'); if (hl) hl.innerHTML = "";
         for(let i=0; i<first; i++) grid.innerHTML += `<div class="h-24 md:h-32 bg-stone-50/30"></div>`;
         for(let i=1; i<=days; i++) {
-            const d = new Date(y, m, i), ds = d.toDateString(), jd = getJawaData(d);
-            const isSel = ds === selectedDate.toDateString(), isToday = ds === new Date().toDateString();
-            grid.innerHTML += `
-                <div onclick="selectDate(${y}, ${m}, ${i})" class="h-24 md:h-32 p-3 cursor-pointer border-r border-b border-stone-100 relative ${isSel ? 'bg-amber-50 ring-4 ring-amber-500/20 z-10' : (isToday ? 'bg-emerald-50' : 'bg-white hover:bg-stone-50')}">
-                    <div class="h-full w-full flex flex-col justify-between">
-                        <div class="flex justify-between items-start">
-                            <span class="text-xl font-bold ${d.getDay()===0?'text-red-600':'text-stone-800'}">${i}</span>
-                            ${agendas[ds] ? '<div class="w-2 h-2 bg-blue-500 rounded-full"></div>' : ''}
-                        </div>
-                        <div class="flex flex-col text-[9px] font-bold text-stone-400">
-                            <span>${jd.tgl} ${jd.bulan.substring(0,3)}</span>
-                            <span class="bg-stone-100 text-stone-600 p-0.5 rounded uppercase mt-0.5 w-fit">${jd.pasaran}</span>
-                        </div>
-                    </div>
-                </div>`;
+            const d = new Date(y, m, i), ds = d.toDateString(), jd = getJawaData(d), holiday = getHoliday(d);
+            const isSel = ds === selectedDate.toDateString(), isToday = ds === new Date().toDateString(), isRed = d.getDay() === 0 || holiday;
+            if (holiday && hl) hl.innerHTML += `<div class="bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100"><b>${i}</b>: ${holiday}</div>`;
+            grid.innerHTML += `<div onclick="selectDate(${y}, ${m}, ${i})" class="h-24 md:h-32 p-3 cursor-pointer border-r border-b border-stone-100 relative ${isSel ? 'bg-amber-50 ring-4 ring-amber-500/20 z-10' : (isToday ? 'bg-emerald-50' : 'bg-white hover:bg-stone-50')}"><div class="h-full w-full flex flex-col justify-between"><div class="flex justify-between items-start"><span class="text-xl font-bold ${isRed ? 'text-red-600' : 'text-stone-800'}">${i}</span>${agendas[ds] ? '<div class="w-2 h-2 bg-blue-500 rounded-full"></div>' : ''}</div><div class="flex flex-col text-[9px] font-bold text-stone-400"><span>${jd.tgl} ${jd.bulan.substring(0,3)}</span><span class="bg-stone-100 text-stone-600 p-0.5 rounded uppercase mt-0.5 w-fit">${jd.pasaran}</span></div></div></div>`;
         }
     }
 
     function changeView(m) {
-        viewMode = m;
-        document.getElementById('monthly-view').classList.toggle('hide', m !== 'monthly');
-        document.getElementById('calculator-view').classList.toggle('hide', m !== 'calculator');
-        document.getElementById('btn-monthly').classList.toggle('bg-stone-900', m === 'monthly');
-        document.getElementById('btn-monthly').classList.toggle('text-white', m === 'monthly');
-        document.getElementById('btn-calc').classList.toggle('bg-stone-900', m === 'calculator');
-        document.getElementById('btn-calc').classList.toggle('text-white', m === 'calculator');
+        viewMode = m; const mv = document.getElementById('monthly-view'), cv = document.getElementById('calculator-view'), bm = document.getElementById('btn-monthly'), bc = document.getElementById('btn-calc');
+        if (mv) mv.classList.toggle('hide', m !== 'monthly'); if (cv) cv.classList.toggle('hide', m !== 'calculator');
+        if (bm) { bm.classList.toggle('bg-stone-900', m === 'monthly'); bm.classList.toggle('text-white', m === 'monthly'); }
+        if (bc) { bc.classList.toggle('bg-stone-900', m === 'calculator'); bc.classList.toggle('text-white', m === 'calculator'); }
         if (m === 'monthly') renderCalendar();
     }
 
@@ -511,36 +550,16 @@
     function nextYear() { currentDate.setFullYear(currentDate.getFullYear() + 1); renderCalendar(); }
     function goToday() { currentDate = new Date(); selectedDate = new Date(); renderCalendar(); renderDetail(); }
     function saveAgenda() {
-        const v = document.getElementById('agenda-input').value;
-        if(v.trim()) agendas[selectedDate.toDateString()] = v;
-        else delete agendas[selectedDate.toDateString()];
-        localStorage.setItem('kal_agendas', JSON.stringify(agendas));
-        renderCalendar();
+        const input = document.getElementById('agenda-input'); if (!input) return; const v = input.value;
+        if(v.trim()) agendas[selectedDate.toDateString()] = v; else delete agendas[selectedDate.toDateString()];
+        localStorage.setItem('kal_agendas', JSON.stringify(agendas)); renderCalendar();
     }
     function deleteAgenda() {
-        delete agendas[selectedDate.toDateString()];
-        document.getElementById('agenda-input').value = '';
-        localStorage.setItem('kal_agendas', JSON.stringify(agendas));
-        renderCalendar();
+        const input = document.getElementById('agenda-input'); delete agendas[selectedDate.toDateString()];
+        if (input) input.value = ''; localStorage.setItem('kal_agendas', JSON.stringify(agendas)); renderCalendar();
     }
 
-    function initKeyboardEvents() {
-        const inputs = document.querySelectorAll('.calc-input');
-        inputs.forEach(input => {
-            input.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    executeCalculation();
-                }
-            });
-        });
-    }
-
-    window.onload = () => { 
-        renderDetail(); 
-        renderCalendar(); 
-        initKeyboardEvents();
-    };
+    window.onload = () => { renderDetail(); renderCalendar(); };
 </script>
 </body>
 </html>
