@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalender Jawa & Primbon Lengkap ✨ AI Powered</title>
+    <title>Kalender Jawa & Primbon Lengkap</title>
 <meta name="theme-color" content="#78350f">
 <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3652/3652191.png">
 
@@ -38,15 +38,6 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-        }
-        .ai-shimmer {
-            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-            0 multiSpeakerVoiceConfig { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
         }
     </style>
 </head>
@@ -139,22 +130,10 @@
                     <button onclick="switchTab('weton')" id="tab-weton" class="px-6 py-4 font-black uppercase tracking-widest text-xs tab-active whitespace-nowrap">Cek Weton</button>
                     <button onclick="switchTab('jodoh')" id="tab-jodoh" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-stone-400 whitespace-nowrap">Weton Jodoh</button>
                     <button onclick="switchTab('nogodino')" id="tab-nogodino" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-stone-400 whitespace-nowrap">Nogo Dino</button>
-                    <button onclick="switchTab('pakar')" id="tab-pakar" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-amber-600 whitespace-nowrap">Ki Sepuh ✨</button>
                     <button onclick="switchTab('kematian')" id="tab-kematian" class="px-6 py-4 font-black uppercase tracking-widest text-xs text-stone-400 whitespace-nowrap">Selamatan</button>
                 </div>
 
                 <p id="calc-context-label" class="text-amber-600 font-bold text-[10px] uppercase mb-4">Pilih Tanggal Lahir</p>
-
-                <div id="pakar-input-view" class="hide space-y-6">
-                    <div class="bg-amber-50 p-6 rounded-3xl border border-amber-200">
-                        <h4 class="font-black text-amber-800 mb-2">Ki Sepuh ✨</h4>
-                        <p class="text-sm text-amber-700/80 leading-relaxed mb-4">Tanyakan apa saja seputar ramalan, nasihat hidup, atau cara mencari hari baik menurut tradisi Jawa kepada Ki Sepuh.</p>
-                        <textarea id="ai-query" placeholder="Contoh: Bagaimana cara meningkatkan aura rezeki untuk weton Senin Pon?" class="w-full h-32 p-4 bg-white border border-amber-200 rounded-2xl focus:ring-4 focus:ring-amber-500/20 outline-none text-sm resize-none"></textarea>
-                        <button onclick="consultAI()" class="mt-4 w-full py-4 bg-amber-600 text-white font-black rounded-2xl shadow-lg hover:bg-amber-700 transition flex items-center justify-center gap-2">
-                            <span>Tanya Ki Sepuh ✨</span>
-                        </button>
-                    </div>
-                </div>
 
                 <div id="input-container" class="grid grid-cols-3 gap-4 mb-6">
                     <div>
@@ -197,10 +176,6 @@
                 <button id="calc-btn" onclick="executeCalculation()" class="w-full py-5 bg-stone-900 text-white font-black rounded-2xl shadow-xl hover:bg-stone-800 transition">Hitung Sekarang</button>
                 
                 <div id="res-container" class="mt-8 p-0 bg-transparent rounded-3xl hidden animate-zoom"></div>
-                <div id="ai-loading" class="hide mt-8 p-12 bg-stone-50 rounded-3xl border border-stone-200 text-center space-y-4">
-                    <div class="w-12 h-12 border-4 border-amber-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                    <p class="text-xs font-black uppercase text-stone-400">Ki Sepuh sedang menelaah kitab ✨...</p>
-                </div>
             </div>
         </div>
 
@@ -219,18 +194,9 @@
             <!-- SLOT IKLAN SIDEBAR -->
             <div class="bg-white rounded-3xl shadow-xl p-6 border border-stone-200">
                 <h3 class="font-black uppercase tracking-widest text-[10px] text-stone-400 mb-4 text-center">Sponsored Content</h3>
-                <div class="ad-slot-container" style="min-height: 200px;">
-                    <div class="text-center w-full">
-                        <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                             data-ad-slot="XXXXXXXXXX"
-                             data-ad-format="auto"
-                             data-full-width-responsive="true"></ins>
-                        <script>
-                             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-                        </script>
-                        <p class="text-[11px] text-stone-300 italic">Iklan Sidebar</p>
+                <div class="bg-stone-50 rounded-2xl border border-stone-100 flex items-center justify-center p-8 text-center">
+                    <div class="text-stone-300 italic text-[11px]">
+                         <p>Iklan Sidebar</p>
                     </div>
                 </div>
             </div>
@@ -239,7 +205,6 @@
 </div>
 
 <script>
-    const apiKey = ""; 
     const PASARAN = ['Legi', 'Pahing', 'Pon', 'Wage', 'Kliwon'];
     const HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     const BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -256,6 +221,22 @@
     const SHIO = ["Monyet", "Ayam", "Anjing", "Babi", "Tikus", "Kerbau", "Macan", "Kelinci", "Naga", "Ular", "Kuda", "Kambing"];
     const ELEMEN = ["Logam", "Logam", "Air", "Air", "Kayu", "Kayu", "Api", "Api", "Tanah", "Tanah"];
     
+    // Database Karakter Weton Tradisional
+    const KARAKTER_WETON = {
+        "Minggu": "Mandiri, berwibawa, dan suka menolong.",
+        "Senin": "Murah hati, pandai bicara, dan rapi.",
+        "Selasa": "Kuat pendirian, pemberani, dan gesit.",
+        "Rabu": "Ramah, berjiwa pemimpin, namun kadang keras kepala.",
+        "Kamis": "Pekerja keras, ambisius, dan penyabar.",
+        "Jumat": "Suka keindahan, romantis, dan kreatif.",
+        "Sabtu": "Tanggung jawab tinggi, pendiam, namun setia.",
+        "Legi": "Jujur, pemaaf, dan berwawasan luas.",
+        "Pahing": "Cerdas, teliti, namun sering curiga.",
+        "Pon": "Berani, dermawan, namun mudah tersinggung.",
+        "Wage": "Rajin, penurut, dan suka kedamaian.",
+        "Kliwon": "Berjiwa seni, berwibawa, dan spiritual."
+    };
+
     const INDO_HOLIDAYS = {
         "fixed": { "01-01": "Tahun Baru Masehi", "05-01": "Hari Buruh Internasional", "06-01": "Hari Lahir Pancasila", "08-17": "Hari Kemerdekaan RI", "12-25": "Hari Raya Natal" },
         "2025": { "01-27": "Isra Mi'raj", "01-29": "Tahun Baru Imlek", "03-29": "Hari Suci Nyepi", "03-31": "Idul Fitri", "04-01": "Idul Fitri", "04-18": "Wafat Yesus Kristus", "04-20": "Hari Paskah", "05-12": "Hari Raya Waisak", "05-29": "Kenaikan Yesus Kristus", "06-06": "Idul Adha", "06-27": "Tahun Baru Islam", "09-05": "Maulid Nabi" },
@@ -281,22 +262,8 @@
     let selectedDate = new Date();
     let agendas = JSON.parse(localStorage.getItem('kal_agendas') || '{}');
 
-    async function askGemini(prompt, systemInstruction = "Anda adalah Ki Sepuh, pakar Primbon Jawa yang sangat bijaksana. Jawab dalam Bahasa Indonesia yang santun dan informatif.") {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: systemInstruction }] } };
-        for (let i = 0; i < 5; i++) {
-            try {
-                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) throw new Error("API Request Failed");
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, Ki Sepuh sedang bertapa.";
-            } catch (e) { await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000)); }
-        }
-        return "Gagal terhubung dengan Ki Sepuh. Silakan coba lagi nanti.";
-    }
-
     function shareToWhatsApp(text) {
-        const fullText = `${text}\n\n_Cek selengkapnya di:_ https://rosokit-sys.github.io/primbon/\n\n_Dikirim dari Kalender Jawa & Primbon Ki Sepuh ✨_`;
+        const fullText = `${text}\n\n_Cek selengkapnya di:_ https://rosokit-sys.github.io/primbon/\n\n_Dikirim dari Kalender Jawa & Primbon ✨_`;
         const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`;
         window.open(url, '_blank');
     }
@@ -323,7 +290,15 @@
                 totalJawaDays += BULAN_JAWA[curBlnIdx]?.hari || 30;
             }
         }
-        return { tgl: totalJawaDays, bulan: BULAN_JAWA[curBlnIdx]?.nama || 'Suro', tahun: curThn, pasaran: pasaran, neptu: NEPTU_HARI[HARI[d.getDay()]] + NEPTU_PASARAN[pasaran] };
+        return { 
+            tgl: totalJawaDays, 
+            bulan: BULAN_JAWA[curBlnIdx]?.nama || 'Suro', 
+            tahun: curThn, 
+            pasaran: pasaran, 
+            neptuHari: NEPTU_HARI[HARI[d.getDay()]],
+            neptuPasaran: NEPTU_PASARAN[pasaran],
+            neptu: NEPTU_HARI[HARI[d.getDay()]] + NEPTU_PASARAN[pasaran] 
+        };
     }
 
     function calculateAge(birthDate) {
@@ -336,43 +311,32 @@
 
     function switchTab(tab) {
         activeTab = tab;
-        ['weton', 'jodoh', 'kematian', 'nogodino', 'pakar'].forEach(t => {
+        ['weton', 'jodoh', 'kematian', 'nogodino'].forEach(t => {
             const btn = document.getElementById(`tab-${t}`);
-            if (btn) { btn.classList.toggle('tab-active', t === tab); btn.classList.toggle('text-stone-400', t !== tab && t !== 'pakar'); }
+            if (btn) { 
+                btn.classList.toggle('tab-active', t === tab); 
+                btn.classList.toggle('text-stone-400', t !== tab); 
+            }
         });
         
         const extraPanel = document.getElementById('extra-person');
         const extraLabel = document.getElementById('extra-label');
         const contextLabel = document.getElementById('calc-context-label');
-        const inputContainer = document.getElementById('input-container');
-        const calcBtn = document.getElementById('calc-btn');
-        const pakarView = document.getElementById('pakar-input-view');
-
-        if (pakarView) pakarView.classList.toggle('hide', tab !== 'pakar');
-        if (inputContainer) inputContainer.classList.toggle('hide', tab === 'pakar');
-        if (calcBtn) calcBtn.classList.toggle('hide', tab === 'pakar');
+        const resContainer = document.getElementById('res-container');
 
         if (tab === 'jodoh') {
-            if (extraPanel) extraPanel.classList.remove('hide');
-            if (extraLabel) extraLabel.innerText = "Data Pasangan (Tanggal Lahir)";
-            if (contextLabel) contextLabel.innerText = "Pilih Tanggal Lahir Anda";
-        } else if (tab === 'nogodino') {
-            if (extraPanel) extraPanel.classList.remove('hide');
-            if (extraLabel) extraLabel.innerText = "Tanggal Lahir Anda (Opsional)";
-            if (contextLabel) contextLabel.innerText = "Pilih Tanggal Kejadian / Keberangkatan";
-        } else if (tab === 'pakar') {
-            if (extraPanel) extraPanel.classList.add('hide');
-            if (contextLabel) contextLabel.innerText = "Konsultasi Khusus";
+            extraPanel.classList.remove('hide');
+            extraLabel.innerText = "Data Pasangan (Tanggal Lahir)";
+            contextLabel.innerText = "Pilih Tanggal Lahir Anda";
         } else {
-            if (extraPanel) extraPanel.classList.add('hide');
-            if (contextLabel) contextLabel.innerText = tab === 'kematian' ? "Pilih Tanggal Meninggal" : "Pilih Tanggal Lahir";
+            extraPanel.classList.add('hide');
+            contextLabel.innerText = tab === 'kematian' ? "Pilih Tanggal Meninggal" : "Pilih Tanggal Lahir";
         }
 
-        const resContainer = document.getElementById('res-container');
         if (resContainer) resContainer.classList.add('hidden');
     }
 
-    async function executeCalculation() {
+    function executeCalculation() {
         const tInput = document.getElementById('manual-tgl'), bInput = document.getElementById('manual-bln'), hInput = document.getElementById('manual-thn');
         if(!tInput || !bInput || !hInput) return;
         const d = new Date(hInput.value, bInput.value, tInput.value);
@@ -385,33 +349,54 @@
         if (activeTab === 'weton') hitungWeton(d, res);
         else if (activeTab === 'jodoh') hitungJodoh(d, res);
         else if (activeTab === 'kematian') hitungKematian(d, res);
-        else if (activeTab === 'nogodino') {
-            const et = document.getElementById('extra-tgl'), eb = document.getElementById('extra-bln'), eh = document.getElementById('extra-thn');
-            const birthD = new Date(eh.value, eb.value, et.value);
-            hitungNogoDino(d, res, birthD);
-        }
+        else if (activeTab === 'nogodino') hitungNogoDino(d, res);
     }
 
     function hitungWeton(birthDate, el) {
         const jd = getJawaData(birthDate), age = calculateAge(birthDate), shio = SHIO[birthDate.getFullYear() % 12], ele = ELEMEN[birthDate.getFullYear() % 10];
-        const summaryText = `Weton: ${HARI[birthDate.getDay()]} ${jd.pasaran}, Neptu: ${jd.neptu}, Shio: ${shio}`;
+        const hariNama = HARI[birthDate.getDay()];
+        const pasaranNama = jd.pasaran;
+        
+        // Logika Angka Hoki deterministik
+        const seed = birthDate.getFullYear() * 10000 + (birthDate.getMonth() + 1) * 100 + birthDate.getDate();
+        const luckyNumbers = Array.from({length: 4}, (_, i) => (((seed * (i + 17)) % 90) + 10));
+        
+        const summaryText = `Weton: ${hariNama} ${pasaranNama}, Neptu: ${jd.neptu}, Shio: ${shio}, Angka Hoki: ${luckyNumbers.join(', ')}`;
+        const karakterTeks = `Sifat hari ${hariNama}: ${KARAKTER_WETON[hariNama]} Pasaran ${pasaranNama}: ${KARAKTER_WETON[pasaranNama]}`;
+
         el.innerHTML = `
             <div class="space-y-6">
                 <div class="bg-stone-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
                     <div class="flex justify-between items-start mb-8">
-                        <div><p class="text-amber-500 font-black uppercase text-[10px] tracking-[0.2em] mb-1">Hasil Analisa Weton</p><h4 class="text-4xl font-black tracking-tighter">${HARI[birthDate.getDay()]} ${jd.pasaran}</h4><p class="text-stone-400 font-bold text-xs mt-1 uppercase tracking-widest">${jd.tgl} ${jd.bulan} ${jd.tahun} AJ</p></div>
+                        <div><p class="text-amber-500 font-black uppercase text-[10px] tracking-[0.2em] mb-1">Hasil Analisa Weton</p><h4 class="text-4xl font-black tracking-tighter">${hariNama} ${pasaranNama}</h4><p class="text-stone-400 font-bold text-xs mt-1 uppercase tracking-widest">${jd.tgl} ${jd.bulan} ${jd.tahun} AJ</p></div>
                         <div class="text-right"><div class="bg-amber-600 px-4 py-2 rounded-xl inline-block mb-2"><p class="text-[10px] uppercase font-black text-amber-100 leading-none">Usia</p><p class="text-2xl font-black">${age}</p></div><div class="block"><p class="text-2xl font-black text-amber-400">${jd.neptu}</p></div></div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-white/5 p-4 rounded-2xl border border-white/10"><p class="text-[10px] opacity-50 mb-1">Shio</p><p class="font-black text-xl">${shio}</p></div>
                         <div class="bg-white/5 p-4 rounded-2xl border border-white/10"><p class="text-[10px] opacity-50 mb-1">Elemen</p><p class="font-black text-xl">${ele}</p></div>
                     </div>
+                    <div class="mt-6 pt-6 border-t border-white/10 grid grid-cols-2 gap-4 text-xs">
+                        <div><p class="opacity-50">Neptu Hari (${hariNama})</p><p class="font-bold text-amber-400 text-lg">${jd.neptuHari}</p></div>
+                        <div><p class="opacity-50">Neptu Pasaran (${pasaranNama})</p><p class="font-bold text-amber-400 text-lg">${jd.neptuPasaran}</p></div>
+                    </div>
                 </div>
-                <div class="flex flex-col gap-3">
-                    <button onclick="deepWetonAI('${HARI[birthDate.getDay()]} ${jd.pasaran}', ${jd.neptu}, '${shio}')" class="w-full py-4 bg-amber-100 text-amber-800 border border-amber-200 rounded-2xl font-black text-sm hover:bg-amber-200 transition">Analisa Karakter Mendalam ✨</button>
-                    <button onclick="shareToWhatsApp('${summaryText}')" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-sm hover:bg-emerald-700 transition flex items-center justify-center gap-2">Bagikan ke WhatsApp 📱</button>
+
+                <!-- Angka Hoki -->
+                <div class="bg-amber-50 p-6 rounded-3xl border border-amber-100 text-center">
+                    <p class="text-[10px] font-black uppercase text-amber-600 mb-4 tracking-[0.2em]">Angka Hoki Kelahiran ✨</p>
+                    <div class="flex justify-center gap-3">
+                        ${luckyNumbers.map(n => `<div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-amber-200"><span class="text-xl font-black text-stone-800">${n}</span></div>`).join('')}
+                    </div>
                 </div>
-                <div id="ai-weton-res" class="hide p-6 bg-white border border-stone-200 rounded-3xl text-sm leading-relaxed"></div>
+
+                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm text-center">
+                    <p class="text-[10px] font-black uppercase text-amber-600 mb-3 tracking-widest">Karakter Dasar</p>
+                    <p class="text-sm leading-relaxed text-stone-600 italic">"${karakterTeks}"</p>
+                </div>
+
+                <button onclick="shareToWhatsApp('${summaryText}')" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-sm hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                    Bagikan ke WhatsApp 📱
+                </button>
             </div>`;
     }
 
@@ -419,29 +404,52 @@
         const et = document.getElementById('extra-tgl'), eb = document.getElementById('extra-bln'), eh = document.getElementById('extra-thn');
         const d2 = new Date(eh.value, eb.value, et.value);
         const jd1 = getJawaData(d1), jd2 = getJawaData(d2), total = jd1.neptu + jd2.neptu, sisa = total % 8;
-        const hasil = ["PESHTI", "PEGAT", "RATU", "JODOH", "TOPO", "TINARI", "PADU", "SUJANAN"], desc = ["Harmonis selalu.", "Sering masalah.", "Beruntung rezekinya.", "Sangat Cocok.", "Sulit di awal.", "Murah rezeki.", "Cekcok mulut.", "Godaan ketiga."];
+        const shio1 = SHIO[d1.getFullYear() % 12], shio2 = SHIO[d2.getFullYear() % 12];
+        
+        const hasil = ["PESHTI", "PEGAT", "RATU", "JODOH", "TOPO", "TINARI", "PADU", "SUJANAN"], 
+              desc = ["Harmonis selalu.", "Sering masalah.", "Beruntung rezekinya.", "Sangat Cocok.", "Sulit di awal.", "Murah rezeki.", "Cekcok mulut.", "Godaan ketiga."];
+        
         el.innerHTML = `
-            <div class="bg-white rounded-3xl p-8 border border-stone-200 text-center animate-zoom shadow-xl">
-                <p class="text-[10px] font-black uppercase text-amber-600 mb-2">Total Neptu: ${total}</p>
-                <h4 class="text-5xl font-black text-stone-900 mb-2 tracking-tighter">${hasil[sisa]}</h4><p class="text-sm text-stone-500 mb-6">"${desc[sisa]}"</p>
-                <div class="flex flex-col gap-3">
-                    <button onclick="askGemini('Jelaskan kecocokan jodoh neptu ${jd1.neptu} dan ${jd2.neptu} yang menghasilkan ${hasil[sisa]} dalam primbon jawa.').then(t => { const c = document.getElementById('ai-jodoh-res'); c.classList.remove('hide'); c.innerText = t; })" class="text-xs font-bold text-amber-600">Bedah Kecocokan ✨</button>
-                    <button onclick="shareToWhatsApp('Hasil Cek Jodoh: ${hasil[sisa]} (${desc[sisa]}). Total Neptu Kami: ${total}')" class="text-xs font-bold text-emerald-600">Bagikan Hasil 📱</button>
+            <div class="space-y-6">
+                <div class="bg-stone-50 p-6 rounded-3xl border border-stone-200 space-y-4">
+                    <p class="text-[10px] font-black uppercase text-stone-400 tracking-widest">Rincian Perhitungan</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm">
+                            <p class="text-[9px] font-bold text-stone-400 uppercase mb-2">Anda</p>
+                            <p class="font-black text-stone-900 text-base">${HARI[d1.getDay()]} ${jd1.pasaran}</p>
+                            <p class="text-xs font-bold text-amber-600 mb-2">Neptu: ${jd1.neptu} | Shio: ${shio1}</p>
+                            <div class="mt-2 pt-2 border-t border-stone-50 text-[10px] text-stone-500 italic">
+                                ${KARAKTER_WETON[HARI[d1.getDay()]]}
+                            </div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm">
+                            <p class="text-[9px] font-bold text-stone-400 uppercase mb-2">Pasangan</p>
+                            <p class="font-black text-stone-900 text-base">${HARI[d2.getDay()]} ${jd2.pasaran}</p>
+                            <p class="text-xs font-bold text-amber-600 mb-2">Neptu: ${jd2.neptu} | Shio: ${shio2}</p>
+                            <div class="mt-2 pt-2 border-t border-stone-50 text-[10px] text-stone-500 italic">
+                                ${KARAKTER_WETON[HARI[d2.getDay()]]}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-amber-100/50 p-4 rounded-2xl text-center border border-amber-200">
+                        <p class="text-xs font-bold text-amber-800">Rumus: (${jd1.neptu} + ${jd2.neptu}) mod 8 = Sisa ${sisa}</p>
+                    </div>
                 </div>
-                <div id="ai-jodoh-res" class="hide mt-4 p-4 bg-stone-50 rounded-2xl text-left text-xs italic"></div>
+
+                <div class="bg-white rounded-3xl p-8 border border-stone-200 text-center animate-zoom shadow-xl">
+                    <p class="text-[10px] font-black uppercase text-amber-600 mb-2">Total Neptu: ${total}</p>
+                    <h4 class="text-5xl font-black text-stone-900 mb-2 tracking-tighter">${hasil[sisa]}</h4><p class="text-sm text-stone-500 mb-6">"${desc[sisa]}"</p>
+                    <button onclick="shareToWhatsApp('Hasil Cek Jodoh: ${hasil[sisa]} (${desc[sisa]}). Total Neptu Kami: ${total}')" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2">
+                        Bagikan ke WhatsApp 📱
+                    </button>
+                </div>
             </div>`;
     }
 
-    function hitungNogoDino(d, el, birthD) {
+    function hitungNogoDino(d, el) {
         const jd = getJawaData(d), nogoMap = { 'Legi': 'Timur', 'Pahing': 'Selatan', 'Pon': 'Barat', 'Wage': 'Utara', 'Kliwon': 'Tengah' };
         const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
         const luckyNumbers = Array.from({length: 4}, (_, i) => (((seed * (i + 13)) % 90) + 10));
-        
-        let personalAnalysisBtn = "";
-        if (!isNaN(birthD.getTime())) {
-            const jdb = getJawaData(birthD);
-            personalAnalysisBtn = `<button onclick="aiPersonalNogoDino('${HARI[birthD.getDay()]} ${jdb.pasaran}', '${HARI[d.getDay()]} ${jd.pasaran}', '${nogoMap[jd.pasaran]}')" class="text-xs font-bold text-amber-600 hover:underline">Analisa Personal oleh Ki Sepuh ✨</button>`;
-        }
 
         el.innerHTML = `
             <div class="animate-zoom space-y-6">
@@ -454,60 +462,32 @@
                     </div>
                 </div>
                 <div class="bg-white p-8 rounded-[2.5rem] border border-stone-200 text-center shadow-lg relative overflow-hidden">
-                    <p class="text-[10px] font-black uppercase text-stone-400 mb-6 tracking-[0.2em]">Angka Hoki ✨</p>
+                    <p class="text-[10px] font-black uppercase text-stone-400 mb-6 tracking-[0.2em]">Angka Hoki Hari Ini ✨</p>
                     <div class="flex justify-center gap-3">${luckyNumbers.map(n => `<div class="w-14 h-14 bg-stone-900 rounded-2xl flex items-center justify-center shadow-xl"><span class="text-2xl font-black text-amber-400">${n}</span></div>`).join('')}</div>
-                    <div class="flex flex-col gap-3 mt-6">
-                        <button onclick="aiLuckyNumbers('${luckyNumbers.join(', ')}')" class="text-[10px] text-amber-600 font-bold uppercase">Tafsir Angka ✨</button>
-                        ${personalAnalysisBtn}
-                        <button onclick="shareToWhatsApp('Arah Naga: ${nogoMap[jd.pasaran]}. Angka Hoki: ${luckyNumbers.join(', ')}')" class="text-[10px] text-emerald-600 font-bold uppercase">Kirim ke WA 📱</button>
+                    <div class="mt-6">
+                        <button onclick="shareToWhatsApp('Arah Naga: ${nogoMap[jd.pasaran]}. Angka Hoki: ${luckyNumbers.join(', ')}')" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs">Kirim ke WA 📱</button>
                     </div>
-                    <div id="ai-lucky-res" class="hide mt-4 p-4 text-xs italic text-stone-500 bg-stone-50 rounded-xl"></div>
                 </div>
             </div>`;
     }
 
     function hitungKematian(start, el) {
         const addDays = (d, n) => { let r = new Date(d); r.setDate(r.getDate() + (n - 1)); return r; };
-        const items = [{ l: '3 Hari', d: 3 }, { l: '7 Hari', d: 7 }, { l: '40 Hari', d: 40 }, { l: '100 Hari', d: 100 }, { l: 'Pendhak 1', d: 355 }, { l: '1000 Hari', d: 1000 }];
+        const items = [
+            { l: '3 Hari', d: 3 }, 
+            { l: '7 Hari', d: 7 }, 
+            { l: '40 Hari', d: 40 }, 
+            { l: '100 Hari', d: 100 }, 
+            { l: 'Pendhak 1', d: 355 }, 
+            { l: 'Pendhak 2', d: 709 }, // Penambahan Pendhak 2 (2 tahun Jawa)
+            { l: '1000 Hari', d: 1000 }
+        ];
         let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
         items.forEach(i => {
             const target = addDays(start, i.d), jd = getJawaData(target);
             html += `<div class="p-5 bg-white border border-stone-200 rounded-3xl"><p class="text-[10px] font-black text-amber-600 uppercase mb-1">${i.l}</p><p class="font-black text-stone-900 text-sm">${target.getDate()} ${BULAN[target.getMonth()]} ${target.getFullYear()}</p><p class="text-[10px] text-stone-400 font-bold">${HARI[target.getDay()]} ${jd.pasaran}</p></div>`;
         });
         el.innerHTML = html + '</div>';
-    }
-
-    async function consultAI() {
-        const qInput = document.getElementById('ai-query'); if (!qInput || !qInput.value.trim()) return;
-        const loader = document.getElementById('ai-loading'), res = document.getElementById('res-container');
-        if (loader) loader.classList.remove('hide'); if (res) res.classList.add('hidden');
-        const answer = await askGemini(qInput.value);
-        if (loader) loader.classList.add('hide');
-        if (res) {
-            res.classList.remove('hidden');
-            res.innerHTML = `<div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-xl animate-zoom"><div class="flex items-center gap-2 mb-6"><div class="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center text-white text-xs font-black">KS</div><h4 class="font-black text-stone-800 uppercase text-xs tracking-widest">Analisa Ki Sepuh ✨</h4></div><div id="ai-answer-text" class="prose prose-stone text-sm leading-relaxed whitespace-pre-wrap mb-6">${answer}</div><div class="flex gap-3"><button onclick="shareToWhatsApp(document.getElementById('ai-answer-text').innerText)" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs">Kirim ke WA ✨</button><button onclick="document.getElementById('ai-query').value=''; document.getElementById('res-container').classList.add('hidden');" class="px-5 py-3 border border-stone-200 rounded-xl text-xs font-bold text-stone-400">Tutup</button></div></div>`;
-        }
-    }
-
-    async function deepWetonAI(weton, neptu, shio) {
-        const display = document.getElementById('ai-weton-res'); if (!display) return;
-        display.classList.remove('hide'); display.innerHTML = `<div class="ai-shimmer h-20 rounded-xl w-full"></div>`;
-        const answer = await askGemini(`Ki Sepuh, tolong jelaskan secara mendalam karakter personil dengan weton ${weton} (Neptu ${neptu}) dan Shio ${shio}.`);
-        display.innerHTML = `<div class="space-y-4"><p id="ai-weton-detail-text" class="italic">${answer}</p><button onclick="shareToWhatsApp(document.getElementById('ai-weton-detail-text').innerText)" class="text-xs font-bold text-emerald-600 underline">Kirim Analisa ke WA ✨</button></div>`;
-    }
-
-    async function aiLuckyNumbers(nums) {
-        const display = document.getElementById('ai-lucky-res'); if (!display) return;
-        display.classList.remove('hide'); display.innerText = "Menerawang makna angka...";
-        const answer = await askGemini(`Ki Sepuh, apa makna angka ${nums} hari ini bagi keselamatan dan rezeki?`);
-        display.innerHTML = `<div class="space-y-4"><p id="ai-lucky-detail-text" class="italic">${answer}</p><button onclick="shareToWhatsApp(document.getElementById('ai-lucky-detail-text').innerText)" class="text-[10px] font-bold text-emerald-600 underline">Kirim Tafsir ke WA ✨</button></div>`;
-    }
-
-    async function aiPersonalNogoDino(birthWeton, eventWeton, nogoDirection) {
-        const display = document.getElementById('ai-lucky-res'); if (!display) return;
-        display.classList.remove('hide'); display.innerText = "Ki Sepuh sedang menyelaraskan weton Anda...";
-        const answer = await askGemini(`Ki Sepuh, seseorang lahir di weton ${birthWeton}. Hari ini keberangkatannya adalah weton ${eventWeton} dengan arah naga di ${nogoDirection}. Berikan saran keberangkatan yang selamat dan apakah arah tersebut cocok bagi pribadinya?`);
-        display.innerHTML = `<div class="space-y-4"><p id="ai-personal-nogo-text" class="italic text-amber-900">${answer}</p><button onclick="shareToWhatsApp(document.getElementById('ai-personal-nogo-text').innerText)" class="text-[10px] font-bold text-emerald-600 underline">Kirim Pesan Ki Sepuh ke WA ✨</button></div>`;
     }
 
     function renderDetail() {
